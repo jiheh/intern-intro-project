@@ -1,0 +1,175 @@
+<html>
+<!--
+This is an HTML document. Read more about HTML here (https://www.w3schools.com/html/).
+Anything within a <style> tag will be written in CSS.
+Anything within a <script> tag will be written in JavaScript.
+
+To begin, open this file and the solution file in a browser, such as Chrome.
+The goal of this exercise is to make index.html function like solution.html.
+We've given you the solution; try not to look at it until you've implemented all the steps yourself!
+(Cool note: if you right click and select 'View Page Source' from within the browser, you will
+ see all of the code in this file!)
+
+Download a text editor, such as Sublime Text (free).
+This will be useful in editing the code. Every time you save the file, the changes you made
+should be reflected in the browser (after you refresh).
+
+Follow the comments STEP by STEP for guidance; good luck!
+-->
+
+<head>
+  <style>
+    /*
+    STEP 6:
+    This is a style tag. CSS is used within a style tag to affect the look of the page.
+    Read more about CSS here (https://www.w3schools.com/css/default.asp).
+    Now that you've gotten the functionality of the site working, try adding styles using CSS!
+    (This part is up to you and has no "right" answer).
+    */
+
+    * {
+      font-family: arial;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      margin-top: 2%;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>OpenTable Restaurants by City</h1>
+  <div>
+    <input id='city'></input>
+    <!--
+    STEP 1: Update button so that when you click on it, it calls the function `getRestaurants`
+    below. Hint: https://www.w3schools.com/jsref/event_onclick.asp
+    -->
+    <button>Get Restaurants by City</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Reservations Link</th>
+      </tr>
+    </thead>
+
+    <tbody id='restaurant-list'>
+      <!--
+      STEP 5: Now that you are displaying real restaurant information, you can get rid of this
+      hardcoded row! Delete everything inside the `<tr>` tag.
+      -->
+      <tr>
+        <td>ABC Kitchen</td>
+        <td>123 Grand Street</td>
+        <td>abckitchen.com</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    // This is a script tag. JavaScript is used within a script tag to update the HTMl document
+    // based on user interaction. Read more about JavaScript here (https://www.w3schools.com/js/default.asp).
+
+    function getRestaurants() {
+      // This is an AJAX request (https://www.w3schools.com/xml/ajax_intro.asp)
+      let xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // STEP 2: Once you've hooked up the button to call `getRestaurants` in Step 1, clicking
+          // on the button will make a GET request (fetch me data!) to the URL shown below.
+          // Right click on the browser, click 'Inspect' - which opens up the Chrome Developer Tools -
+          // and select the 'Network' tab to see the request being made every time you click on the button.
+
+          // You can see what the data looks like by going to the link as well; try entering this
+          // in the browser: http://opentable.herokuapp.com/api/restaurants?per_page=100&city=New%20York
+
+          // The line below will grab the data from the link, which is in JSON syntax
+          // (https://www.w3schools.com/js/js_json_syntax.asp), parse it to a JavaScript object,
+          // and print it to the console (click on the 'Console' tab in the Chrome Developer Tools).
+          let response = JSON.parse(this.responseText);
+          console.log(response);
+
+          // The next step is to grab the list of restaurants from the JavaScript object and to
+          // call the function `displayRestaurants` with it as an argument.
+          // Hint: https://www.w3schools.com/js/js_objects.asp
+        }
+      };
+
+      // STEP 3: Right now the button will get restaurants in New York, but we want the user to be
+      // able to specify which city he/she wants a list of restaurants for. Update the variable `city`
+      // to be whatever is entered into the input box. Hint: https://www.w3schools.com/jsref/prop_text_value.asp
+      let city = 'New York';
+      let url = 'http://opentable.herokuapp.com/api/restaurants?per_page=100&city=' + city;
+      xhttp.open('GET', url, true);
+      xhttp.send();
+    }
+
+    function displayRestaurants(restaurants) {
+      table = document.getElementById('restaurant-list');
+
+      restaurants.forEach(function(restaurant) {
+        // STEP 4: Here, we are going through a loop of all the restaurants and creating a row for
+        // for the table as well as creating a cell to hold the restaurant name. We are then attaching
+        // the cell to the row, and attaching the row to the table.
+        let row = createRow();
+
+        // Using the helper function `createCell`, make cells to display the restaurant `address`
+        // and `reserve_url` and attach them to the row. Remember, you can see what fields are
+        // on a restaurant object in the console.
+        let name = createCell(restaurant.name);
+        row.appendChild(name);
+
+        table.appendChild(row);
+      })
+    }
+
+    // This is a helper function used to create a table row.
+    // You can read more about document.createElement here
+    // (https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement)
+    function createRow() {
+      return document.createElement('tr');
+    }
+
+    // This is a helper function used to create a table cell.
+    // It takes an argument called `text` and returns a table cell with the text inside.
+    function createCell(text) {
+      let cell = document.createElement('td');
+      let cellText = document.createTextNode(text);
+      cell.appendChild(cellText);
+      return cell;
+    }
+  </script>
+</body>
+
+<!--
+BONUS PROBLEMS:
+
+BONUS 1:
+Find a way to clear out the city name in the input box after you submit so you can easily get
+restaurants for a new city.
+HINT: https://www.w3schools.com/jsref/prop_text_value.asp, and think about the ORDER of the functions
+
+BONUS 2:
+Find a way to clear out the existing list of restaurants when you submit a city so that you only
+view the new list of restaurants (think loops).
+HINT: https://www.w3schools.com/jsref/prop_node_firstchild.asp
+HINT: https://www.w3schools.com/jsref/met_node_removechild.asp
+
+BONUS 3:
+Instead of displaying the text for the URL in the restaurants list, display a hyperlink that will
+take you to the URL.
+HINT: https://www.w3schools.com/tags/tag_a.asp
+
+BONUS 4:
+When you load the page, change the focus to be on the input box so you can type a city name right away.
+HINT: https://www.w3schools.com/jsref/met_html_focus.asp
+-->
+
+</html>
